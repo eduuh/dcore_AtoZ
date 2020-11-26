@@ -84,3 +84,102 @@ public async Task<ActionResult<IEnumerable<Values>>> Get()
 #### Testing Api with Postman
 
 When it comes to testing your api. The browser in usually not the best tool to test your **rest api**. You could just took to using **postman utility** to test your api.
+
+### Why use sqlite
+
+Sqlite allow portablity when developing. Since we don't need to install additonal software when developing our application. When using **entityframework** the database technology you choose to use is **irrelevant**. Entityframework abstracts that layer away and you dont even need to think about it. Databases can be swapped when need without much work.
+
+Of course when publishing our application we will not publish with **sqlite** we will use a different database **say mysql, sql server**.
+
+### Why separate out our Projects
+
+We get a genuine **separation of concern** when building our project in this way. Although it might appear as overcomplication our code. What we get at the end it a projects with layers that are responsible of a few things.
+
+### What we will Do
+
+- **Create, Read, Update and Delete**
+- **Thin Api Controllers** Instead of having the logic in our **api** we will move out the code away from that.
+- **Seeding more data**
+- **Adding more Migrations**
+- **CQRS and Mediator Pattern**
+
+### Seeding Related Data.
+
+Seeding data with the **modelbuilder** is a simple way for simple data. But when you have relational data. seeding it with the method becomes a little bit tricky. This calls for a new approch to seed our data in the code.
+
+The new way am usiing is simple. Since i create a **SeedData** class and a static method that takens in the **dbcontext** class. Using dbcontext we can add a range of activities. But first i check if there are any Activity in existance. IF they are , nothing is added. 
+
+The static method is called at startup at the same place i called the **database migrations**.
+
+```csharp
+context.Database.Migrate();
+SeedData.SeedActivities(context);
+```
+
+### CRUD. Using CQRS and MEDIATOR patterns
+
+> *Command-query Separation*
+
+**Commands** Does something, Modifies State, should not return a value. Examples includes **Create, Update, Delete**
+
+**Query** Answers a question. Does not modify state. should return a value. **Get**
+
+#### CQRS
+
+with CQRs you could have **multiple databases** lets say two datbase. One optimized for **reading data** and the **other optimized for writing data**.
+
+- commands use write DB.
+- Queries use read Db.
+- CQRS ensures Eventual consistency.
+- can be faster.
+
+CQRS is responsible on database flow. CQRS - Single Database
+
+#### Another use case of CQRS
+
+CQRS using an **event store**. Every Event that happens is tracked and Stored in the event store database.
+
+#### Pros
+
+1. Scalability.
+2. Flexibility.
+3. Event Sourcing.
+
+#### Cons
+
+- More complex than other patterns.
+- Does not modifly state.
+- Event sourcing costs.
+
+https://youtu.be/JHGkaShoyNs
+
+#### uncle Bob clean architecture
+
+- The dependecy points inwards.  
+- **command Handler - Create Activity**
+MediatR -> **Object in > Handler > Object out
+  - **Object In** the activity object.
+  - **Object out** 
+    - create new Activity.
+    - Save new Activity.
+    - Return "Unit"
+- **Query Handler** -Get Activity
+
+- **object in**
+
+   ```json
+   {
+     id: 3
+   }
+   ```
+
+- **Object Out**
+  - Get activity from **Database** with Id of 3
+  - If activity does not exist retunr not found.
+  - If the activity is found, project into **ActivityDTO**
+  - Return ActivityDTO
+
+#### Adding the Mediator Package
+
+Mediator
+
