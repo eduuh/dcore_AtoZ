@@ -1,45 +1,43 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using Persistence;
 
-namespace DatingApp.API.Controllers
+namespace Api.Controllers
 {
-    [Route("api/[controller]")]
     [ApiController]
+    [Route("[controller]")]
     public class ValuesController : ControllerBase
     {
-        // GET api/values
+        private readonly DataContext _context;
+
+        public ValuesController(DataContext context)
+        {
+            _context = context;
+        }
+
+
+        // Get api/values
         [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        public async Task<ActionResult<IEnumerable<Values>>> Get()
         {
-            return new string[] { "value1", "value2" };
+            var values = await _context.Values.ToListAsync();
+            return Ok(values);
         }
 
-        // GET api/values/5
+        // Get api/values
         [HttpGet("{id}")]
-        public ActionResult<string> Get(int id)
+        public async Task<ActionResult<IEnumerable<Values>>> Get(int id)
         {
-            return "value";
+            var value = await _context.Values.ToListAsync();
+            return Ok(value);
         }
-
-        // POST api/values
-        [HttpPost]
-        public void Post([FromBody] string value)
-        {
-        }
-
-        // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
-        {
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+        
     }
+
 }
