@@ -183,3 +183,94 @@ MediatR -> **Object in > Handler > Object out
 
 Mediator
 
+### Api Validations
+
+There are a few way of doing data validation in dotnet core. This is essential since we dont want to receive bad data from the server.
+
+1. Api Validation using Data attributes.
+2. Api Validation Using Fluent validation.
+
+#### Data Annotations
+
+Data attributes put on top of the propertties. This is done using **microsoft data annotations** package.
+
+#### Fluent Validator
+
+This is done using Fluent validation package. We will be able to set rules on our commands.
+
+command > validate command > handler logic
+
+T   vbhere is no need to process a request if it does not meet the validation logic.
+
+## Exception and error handling.
+
+To handle errors we will use, **custom middleware** to achive this. If you try to send an empy object. Our servers will most likely accept any data but with all fields null. There are very many ways of doing  data validations.
+
+The simplest is to use **data annnotation**.
+  
+```bash
+[Required]
+public string Title { get; set; }
+```
+
+Now that we added the **data annotation** we want to try to Send an empty object from postman. we know will have validation for the **title** properties.
+
+```json
+traceId": "|afae5dba-47d7327a74651f22.",
+    "errors": {
+        "Title": [
+            "The Title field is required."
+        ]
+    }
+```
+
+Now place a break point  on the api we create in order to debugg. Since on our api we have **[apicontroller]** annotation c# knows to use inbuild data validations for the request. We do not even hit the break point at this stage.
+
+Lets comment it out  the data annotation **[apicontroller]** and see whats happens. The breakpoint get hit. Initially in order to do validation we used to check if the **modelstate** is valid before processing the request.
+
+The request before the **[apicontroller] could be. 👇
+
+```csharp
+[HttpPost]
+public async Task<ActionResult<Unit>> Create(Create.Command command) {
+    if(!ModelState.IsValid) return BadRequest(ModelState);
+    return await _mediator.Send(command);
+}
+```
+
+☝ There is no good reason to  not write the **[apicontroller]**. The other thing the **[apicontroller]** does is **binding source parameter inference**. When doing clean achitecture, We will not do validation in this way. We will look at **fluent validation**.
+
+The fluent validation is addded **between** the **command** and the **handler**.
+
+### Add package for fluent Validation
+
+```bash
+dotnet add package FluentValidation.AspNetCore --version 8.6.3
+```
+
+☝ add the package to the **application** project. The latest version was not **compatible** with .netframwork **2.1**. I changed the project up to target **netcore3.0**. To configure fluent validation we use create a class between the **command** and the **handler** for the sake of create.
+
+```csharp
+
+public class CommandValidator : AbstractValidator<Command>
+{
+    public CommandValidator()
+    {
+        RuleFor(x => x.Title).NotEmpty();
+    }
+}
+```
+
+In order to use **fluentvalidation** we must subscribe to it in the startup classes as.
+
+```csharp
+  services.AddControllers().AddFluentValidation(
+      cfg => {
+          cfg.RegisterValidatorsFromAssemblyContaining<Create>();
+      }
+  );
+```
+
+Ensure you remove the **dataannotation** we used but keep the **[apicontroller]** Restart the application. Trying to create an empty object. We get the same validation errors.
+
+
