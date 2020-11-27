@@ -1,4 +1,5 @@
 using System.Reflection.PortableExecutable;
+using System.Text;
 using Api.Middleware;
 using Application.Activities;
 using Application.Interfaces;
@@ -6,6 +7,7 @@ using Domain;
 using FluentValidation.AspNetCore;
 using Infrastructure.security;
 using MediatR;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -13,6 +15,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Persistence;
 
 namespace Api
@@ -51,6 +54,18 @@ namespace Api
 
       services.AddAuthentication();
       services.AddScoped<IJwtGenerator, JwtGenerator>();
+      var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Tokenkey"]));
+
+      services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(opt =>
+      {
+          opt.TokenValidationParameters = new TokenValidationParameters
+          {
+              ValidateIssuerSigningKey = true,
+              IssuerSigningKey = key,
+              ValidateAudience = false,
+              ValidateIssuer = false
+          };
+      });
 
         }
 
@@ -67,7 +82,9 @@ namespace Api
       app.UseHttpsRedirection();
 
       app.UseRouting();
+      // use routing
 
+      app.UseAuthentication();
       app.UseAuthorization();
 
       app.UseEndpoints(endpoints =>

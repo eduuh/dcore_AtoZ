@@ -397,3 +397,37 @@ We need to add another package **System.IdentityMode.Token.Jwt*** which provides
 ```bash
 dotnet add package System.IdentityModel.Tokens.Jwt --version 6.8.0
 ```
+
+After that is fully set up what remains is **adding authentication to our api**
+
+### Adding Authentication
+
+Let add a package  **Microsoft.AspNetCore.Authentication.JwtBearer**. Always add package **same version** as your installed runtimes.
+
+configured the Jwt token in startup.
+
+#### User Secrets
+
+User secrets are usually available in **Development** mode an in production environment we do not have access to the user secrets. Set **dotnet secrets** in your startup applications.
+
+To generate user secrets. Use the command.
+
+```bash
+dotnet user-secrets init -p api/
+```
+
+Add the token  use the command.
+
+```bash
+dotnet user-secrets set "Tokenkey" "super secret key"
+Successfully saved Tokenkey = super secret key to the secret store.
+```
+
+This key is specific to a machine. If you change your machine you will need to recreate the token again. using the above command.
+
+To list out available keys use the command.
+
+```bash
+➜ dotnet user-secrets list -p Api
+Tokenkey = super secret key
+```
