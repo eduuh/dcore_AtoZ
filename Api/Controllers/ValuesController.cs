@@ -27,6 +27,7 @@ namespace Api.Controllers
         public async Task<ActionResult<IEnumerable<Values>>> Get()
         {
             var values = await _context.Values.ToListAsync();
+            if(values == null) return NotFound();
             return Ok(values);
         }
 

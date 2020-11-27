@@ -1,4 +1,5 @@
 using System.Reflection.PortableExecutable;
+using Api.Middleware;
 using Application.Activities;
 using FluentValidation.AspNetCore;
 using MediatR;
@@ -42,9 +43,11 @@ namespace Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            //added custom middleware.
+            app.UseMiddleware<ErrorHandlinMiddleware>();
             if (env.IsDevelopment())
             {
-                app.UseDeveloperExceptionPage();
+               // app.UseDeveloperExceptionPage();
             }
 
             app.UseHttpsRedirection();

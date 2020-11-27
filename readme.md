@@ -273,4 +273,26 @@ In order to use **fluentvalidation** we must subscribe to it in the startup clas
 
 Ensure you remove the **dataannotation** we used but keep the **[apicontroller]** Restart the application. Trying to create an empty object. We get the same validation errors.
 
+### Error Handling
 
+Right Now our program is either sending **500** or a **200**. We need a way to send the right **error responses** for our api. There are a few way to return status code.
+
+1. Using **Application Handlers**. Our application project do not have access to the **application handlers**.
+2. Throw an **exception** that returns a https status code. This will done by creating our own middware. Our middleware have access to our **http context**.
+
+#### Normally
+
+When using **repository pattern** the approch we do to send back status code is **
+
+```csharp
+  // Get api/values
+  [HttpGet]
+  public async Task<ActionResult<IEnumerable<Values>>> Get()
+  {
+      var values = await _context.Values.ToListAsync();
+      if(values == null) return NotFound();
+      return Ok(values);
+  }
+```
+
+☝ this makes our api **smart** but the aim of **CQRS and Mediator** is to make our apis thin apis. 
