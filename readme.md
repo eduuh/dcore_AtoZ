@@ -347,4 +347,53 @@ Run the application to apply migrations.
 
 ### JwT token Authentication
 
+Jwt token is made up three parts. This token are used to **identify** users to an api. Using Jwt token, the server does not need to make a query to the database to determine you are who u say u are.
+
+1. Header
+  - describes the **hashing** algorithm used to generate the key.
+2. Payload.
+  - Usually described as the claims of of the jwt.
+     contains
+      1. iat - created at date
+      2. exp - expiring date
+      3. payload - id
+3. Verfy Signature
+
+Always note that the token, will be decoded by anyone. Also make sure that the payload is small since it will be sent along your requests.
+
+The last part is **Verify Signature**. This part is used to tell if the token have been tempered with, or modified. This is a signature that is attached to the token and hashed using a **secret*** and the hashing algorithm defined.
+
+### workflow
+
+- The user is **client/User** creates a request to the server sending a **username** and **a password**.
+- The server **queries** the datbase to see if the specified password and username are correct.  
+- Once **identity** is verified the server issues a **jwt** token that is then use for other requests.
+- The Jwt token could have a payload with **the user email or id** which is used to idetify whose request is whose.
+  - The jwt token is set in the **Header** Authorization header as a **Bearer <jwt>**
+- If the server **verify the** api token resources are given
+- If the **jwt** token have been modified, expired . The server returns a **not authorized** response.
+
+
+To configure this in our clean architecture , we will add a new project **infrastructure project**
+
 ### Adding an Infrastructure Projects
+
+This project will be resposible for **JWT token Generations.**. All this project will no is how to generate a token.
+
+```bash
+➜ dotnet new classlib -n Infrastructure
+```
+
+we want our JwtGenerator to be available to our api thoroug **dependency Injection**. We create an interface on the Application projecte that has a method that returns a token as a string, and pass in a Appuser to the Jwt token.
+
+In the Infastracture project in a **security** folder we create a class that implements the **intefaces** we created in the application folder. Finaly register the two with Dependecy injection in the startapp class as follows.
+
+```csharp
+services.AddScoped<IJwtGenerator, JwtGenerator>();
+```
+
+We need to add another package **System.IdentityMode.Token.Jwt*** which provides access to Jwt claim names.
+
+```bash
+dotnet add package System.IdentityModel.Tokens.Jwt --version 6.8.0
+```

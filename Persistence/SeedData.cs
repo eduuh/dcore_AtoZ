@@ -114,7 +114,7 @@ namespace Persistence
             },
                 };
                 context.Activities.AddRange(activities);
-                context.SaveChangesAsync();
+               await context.SaveChangesAsync();
             }
         }
         

@@ -1,8 +1,10 @@
 using System.Reflection.PortableExecutable;
 using Api.Middleware;
 using Application.Activities;
+using Application.Interfaces;
 using Domain;
 using FluentValidation.AspNetCore;
+using Infrastructure.security;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,6 +50,7 @@ namespace Api
       identitybuilder.AddSignInManager<SignInManager<AppUser>>();
 
       services.AddAuthentication();
+      services.AddScoped<IJwtGenerator, JwtGenerator>();
 
         }
 

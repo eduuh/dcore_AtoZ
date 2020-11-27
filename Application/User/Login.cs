@@ -1,22 +1,21 @@
 using System.Net;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Errors;
+using Application.Interfaces;
 using Domain;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Persistence;
 
 namespace Application.User
 {
     public class Login
     {
-        public class Query : IRequest<AppUser>
+        public class Query : IRequest<User>
         {
             public string Email { get; set; }
-            public string Password { get; set}
+            public string Password { get; set; }
 
         }
         public class QueryValidator : AbstractValidator<Query>
@@ -28,29 +27,38 @@ namespace Application.User
             }
         }
 
-        public class Handler : IRequestHandler<Query, AppUser>
+        public class Handler : IRequestHandler<Query, User>
         {
             private readonly UserManager<AppUser> _userManager;
             private readonly SignInManager<AppUser> _signinmanager;
-            public Handler(UserManager<AppUser> userManager, SignInManager<AppUser> signinmanager)
+            private readonly IJwtGenerator _jwtgenerator;
+            public Handler(UserManager<AppUser> userManager, SignInManager<AppUser> signinmanager, IJwtGenerator jwtgenerator)
             {
-                this._signinmanager = signinmanager;
-                this._userManager = userManager;
+                _jwtgenerator = jwtgenerator;
+                _signinmanager = signinmanager;
+                _userManager = userManager;
 
             }
 
-            public async Task<AppUser> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<User> Handle(Query request, CancellationToken cancellationToken)
             {
-                var user = await _userManager.FindByEmailAsync(request.Email);
-                if(user == null){
-                    throw new RestException(HttpStatusCode.Unauthorized)
-                }
+                AppUser user = await _userManager.FindByEmailAsync(request.Email);
+
+                if (user == null) throw new RestException(HttpStatusCode.Unauthorized, new { User = "Not Authorized " });
 
                 var result = await _signinmanager.CheckPasswordSignInAsync(user, request.Password, false);
-                
-                if(result.Succeeded) {
+
+                if (result.Succeeded)
+                {
                     //TODO: generate token
-                    return user;
+                    return new User
+                    {
+                        DispalyName = user.DisplayName,
+                        Token = _jwtgenerator.createToken(user),
+                        Username = user.UserName,
+                        Image = null
+                    };
+
                 }
                 throw new RestException(HttpStatusCode.Unauthorized);
 
