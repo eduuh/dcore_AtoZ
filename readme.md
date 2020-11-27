@@ -296,3 +296,55 @@ When using **repository pattern** the approch we do to send back status code is 
 ```
 
 ☝ this makes our api **smart** but the aim of **CQRS and Mediator** is to make our apis thin apis. 
+
+### AspNet core Identity
+
+Current anybody can accessing anything with our routes. We need to have a scenario where all our user authenticate and in return gets a **jwt token** which is then sent up with every subsequent requests.
+
+**Asp.Net core Identity** is a membership system that supports login stored in Identity. Asp.net core provides external providers such as google , facebook login. **Asp.Net core identity** will come with **default** user stores. It also gives use access to a **UserManagers** that able to do the **user managements.** and a **Signin managers**. Entity Framework also does the **password hashing** and **salting**.
+
+Add the **identity package to our Domain** class.
+
+```sharp
+dotnet add package Microsoft.AspNetCore.Identity.EntityFrameworkCore --version 3.1.8
+```
+
+Add a **appuser** class and Iherite from **identity** as shown below.
+
+```csharp
+  public class AppUser: IdentityUser
+  {
+  public string DisplayName { get; set; }
+  }
+```
+
+We also need to change the **Datacontext** class to inherit from a **IdentityDbContext** of type of the class we created. We don't need to add our appuser as a dbset in the **datacontext** class. We also need to pass the **model builder** to the base class.
+
+```csharp
+  protected override void OnModelCreating(ModelBuilder builder){
+    base.OnModelCreating(builder);
+}
+```
+
+The line we added ensures that our **appuser** table has a **primary key** of string.
+
+The next step is to **generate migrations**.
+
+```csharp
+➜ dotnet ef migrations add "Added Identity" -p Persistence -s Api
+Build started...
+Build succeeded.
+Done. To undo this action, use 'ef migrations remove'
+```
+
+In dotnet framework 3.0 in order to use thes **signinmanager** you will need to install the package below 👇.
+
+```csharp
+dotnet add package Microsoft.AspNetCore.Identity.UI --version 3.1.8
+```
+
+Run the application to apply migrations.
+
+### JwT token Authentication
+
+### Adding an Infrastructure Projects
