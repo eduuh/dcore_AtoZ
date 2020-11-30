@@ -17,5 +17,9 @@ namespace Api.Controllers
         public async Task<ActionResult<User>> login(Register.Command command){
             return await Mediator.Send(command);
         }
+        [HttpGet]
+        public async Task<ActionResult<User>> CurrentUser(){
+            return await Mediator.Send(new CurrentUser.Query());
+        }
     }
 }
