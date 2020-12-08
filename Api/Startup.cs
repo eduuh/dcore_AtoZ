@@ -3,6 +3,7 @@ using System.Text;
 using Api.Middleware;
 using Application.Activities;
 using Application.Interfaces;
+using AutoMapper;
 using Domain;
 using FluentValidation.AspNetCore;
 using Infrastructure.security;
@@ -42,6 +43,9 @@ namespace Api
 
       // We will have a lot of handlers but we need to tell mediator once
       services.AddMediatR(typeof(List.Handler).Assembly);
+
+      services.AddAutoMapper(typeof(List.Handler));
+
       services.AddControllers( opt =>
       {
           var policy = new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build();

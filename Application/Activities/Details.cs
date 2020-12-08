@@ -1,31 +1,42 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using AutoMapper;
 using Domain;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 namespace Application.Activities
 {
     public class Details
     {
-        public class Query : IRequest<Activity>
+        public class Query : IRequest<ActivityDto>
         {
             public Guid Id { get; set; }
         }
 
-        public class Handler : IRequestHandler<Query, Activity>
+        public class Handler : IRequestHandler<Query, ActivityDto>
         {
             private readonly DataContext _context;
-            public Handler(DataContext context)
+            private readonly IMapper _mapper;
+
+            public Handler(DataContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
-            public async Task<Activity> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<ActivityDto> Handle(Query request, CancellationToken cancellationToken)
             {
-                var activity = await _context.Activities.FindAsync(request.Id);
-                return activity;
+                var activity = await _context.Activities.Include(x => x.UserActivities).ThenInclude(x => x.AppUser).SingleOrDefaultAsync(x => x.Id == request.Id);
+
+               // TODO Add restexcption handler.
+
+                if(activity == null) throw new Exception("Not found");
+
+                var activityToReturn = _mapper.Map<Activity, ActivityDto>(activity);
+                return activityToReturn;
             }
             
         }
