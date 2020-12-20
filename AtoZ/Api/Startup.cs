@@ -20,7 +20,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
-using NSwag;
 
 namespace Api
 {
@@ -47,6 +46,7 @@ namespace Api
       services.AddMediatR(typeof(List.Handler).Assembly);
 
       services.AddAutoMapper(typeof(List.Handler));
+      services.AddSignalR();
 
       services.AddControllers( opt =>
       {
