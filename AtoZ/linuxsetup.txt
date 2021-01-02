@@ -1,0 +1,130 @@
+*** LINUX SERVER SETUP USING A NEWLY CREATED DIGITAL OCEAN LAMP SERVER ***
+
+1. ssh root@ipaddressOfLinuxServer (follow instructions to change password)
+
+
+2. Set up mysql (password available from welcome message)
+
+mysql -u root -p
+
+CREATE USER 'appuser'@'localhost' IDENTIFIED BY 'Pa$$w0rd';
+GRANT ALL PRIVILEGES ON *.* TO 'appuser'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+
+
+3.  Install the dotnet runtime (follow instructions from here https://dotnet.microsoft.com/download/linux-package-manager/ubuntu18-04/runtime-current)
+
+4.  Configure Apache
+
+a2enmod proxy proxy_http proxy_html rewrite
+
+systemctl restart apache2
+
+5.  Configure the virtual host
+
+sudo nano /etc/apache2/sites-available/reactivities.conf
+
+<VirtualHost *:80>
+ProxyPreserveHost On
+ProxyPass / http://127.0.0.1:5000/
+ProxyPassReverse / http://127.0.0.1:5000/
+
+ErrorLog /var/log/apache2/reactivities-error.log
+CustomLog /var/log/apache2/reactivities-access.log common
+
+RewriteEngine on
+RewriteCond %{HTTP:UPGRADE} ^WebSocket$ [NC]
+RewriteCond %{HTTP:CONNECTION} Upgrade$ [NC]
+RewriteRule /(.*) ws://127.0.0.1:5000/$1 [P]
+
+</VirtualHost>
+
+6. Enable the site 
+
+a2ensite reactivities
+
+
+--- deploy the published app before going further ---
+
+7.  Add the deploy.reloaded extension to VS Code
+
+8.  Add a settings.json file in the .vscode folder and add the following:
+
+{
+    "deploy.reloaded": {
+        "packages": [
+            {
+                "name": "Version 1.0.0",
+                "description": "Package version 1.0.0",
+
+                "files": [
+                    "publish/**"
+                ]
+            }
+        ],
+
+        "targets": [
+            {
+                "type": "sftp",
+                "name": "Linux",
+                "description": "SFTP folder",
+
+                "host": "165.22.134.96", "port": 22,
+                "user": "root", "password": "yourpassword",
+
+                "dir": "/var/reactivities",
+                "mappings": {
+                    "api/publish/**": "/"
+                }
+            }
+        ]
+    }
+}
+
+8.  Publish the dotnet application:
+
+dotnet publish -c Release -o publish --self-contained false Reactivities.sln
+
+9.  Deploy the 'package' using the command shell - deploy package
+
+10.  Check the files are on the Linux server:
+
+ls /var/reactivities/
+
+11.  Set up the kestrel web service
+
+sudo nano /etc/systemd/system/kestrel-web.service
+
+[Unit]
+Description=Kestrel service running on Ubuntu 18.04
+[Service]
+WorkingDirectory=/var/reactivities
+ExecStart=/usr/bin/dotnet /var/reactivities/API.dll
+Restart=always
+RestartSec=10
+SyslogIdentifier=reactivities
+User=www-data
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment='Cloudinary__CloudName=digua6bil'
+Environment='Cloudinary__ApiSecret=oqP4cDzpdaKG4Zf8qBxHQB2xIjI'
+Environment='Cloudinary__ApiKey=269272975632736'
+Environment='TokenKey=super secret key'
+[Install]
+WantedBy=multi-user.target
+
+sudo systemctl enable kestrel-web.service
+sudo systemctl start kestrel-web.service
+
+12.  Ensure the server is listening on Port 5000
+
+netstat -ntpl
+
+13.  Check the Mysql DB to ensure it is seeded with data:
+
+mysql -u appuser -p
+show databases;
+use reactivities;
+show tables;
+select * from activities;
+
+14.  Browse to app on Linux server IP address.
