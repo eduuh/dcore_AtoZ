@@ -4,14 +4,17 @@ FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim AS base
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
+ENV ASPNETCORE_URLS http://+:80
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.1-buster AS build
 WORKDIR /src
-COPY ["Api.csproj", "Api/"]
-COPY ["../Persistence/Persistence.csproj", "Persistence/"]
-COPY ["../Domain/Domain.csproj", "Domain/"]
-COPY ["../Infrastructure/Infrastructure.csproj", "Infrastructure/"]
-RUN dotnet restore "Api.csproj"
+COPY ["Api/Api.csproj", "Api/"]
+COPY ["Persistence/Persistence.csproj", "Persistence/"]
+COPY ["Domain/Domain.csproj", "Domain/"]
+COPY ["Infrastructure/Infrastructure.csproj", "Infrastructure/"]
+COPY ["Application/Application.csproj", "Application/"]
+
+RUN dotnet restore "Api/Api.csproj"
 COPY . .
 WORKDIR "/src/Api"
 RUN dotnet build "Api.csproj" -c Release -o /app/build
