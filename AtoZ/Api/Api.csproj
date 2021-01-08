@@ -28,14 +28,4 @@
     <ProjectReference Include="..\Application\Application.csproj" />
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <ResolvedFileToPublish Include="readme.md">
-      <RelativePath>
-      wwwroot\readme.md
-      </RelativePath>
-    </ResolvedFileToPublish>
-
-    <Content Update="wwwroot\**\*.txt" CopyToPublishDirectory="never" />
-  </ItemGroup>
 </Project>
