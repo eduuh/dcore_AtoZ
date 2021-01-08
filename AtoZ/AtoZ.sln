@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26124.0
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Api", "Api\Api.csproj", "{B562AF7E-9F13-4F07-BDA8-D14E9DDD246C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Api", "Api\Api.csproj", "{B562AF7E-9F13-4F07-BDA8-D14E9DDD246C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{77949F9B-2066-4F86-90F6-0CF92DA0DFBA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\Persistence.csproj", "{77949F9B-2066-4F86-90F6-0CF92DA0DFBA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{FDD403DB-CE69-486F-BCE8-2710C43937D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{FDD403DB-CE69-486F-BCE8-2710C43937D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{81237A91-60FC-495E-A37A-F9CCDA4F868C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{81237A91-60FC-495E-A37A-F9CCDA4F868C}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{8C833627-0F1C-4EBC-8766-36EBCFD97021}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,9 +21,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{B562AF7E-9F13-4F07-BDA8-D14E9DDD246C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -72,5 +71,23 @@ Global
 		{81237A91-60FC-495E-A37A-F9CCDA4F868C}.Release|x64.Build.0 = Release|Any CPU
 		{81237A91-60FC-495E-A37A-F9CCDA4F868C}.Release|x86.ActiveCfg = Release|Any CPU
 		{81237A91-60FC-495E-A37A-F9CCDA4F868C}.Release|x86.Build.0 = Release|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Debug|x64.Build.0 = Debug|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Debug|x86.Build.0 = Debug|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Release|x64.ActiveCfg = Release|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Release|x64.Build.0 = Release|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Release|x86.ActiveCfg = Release|Any CPU
+		{8C833627-0F1C-4EBC-8766-36EBCFD97021}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {57D5FA06-4DE8-4E3D-B2A1-9D6D9480E251}
 	EndGlobalSection
 EndGlobal
