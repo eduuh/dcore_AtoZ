@@ -21,6 +21,8 @@ using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Threading.Tasks;
+using NSwag;
+using System.Linq;
 
 namespace Api
 {
@@ -101,22 +103,22 @@ namespace Api
 
             });
 
-            // //nswag
-            // services.AddSwaggerDocument(document =>
-            // {
-            //     document.Title = "Speed Governor";
-            //     document.DocumentName = "v1";
-            //     document.Description = " Speed governor data stream api";
+             //nswag
+             services.AddSwaggerDocument(document =>
+             {
+                document.Title = "Dotnet core AtoZ";
+                 document.DocumentName = "v1";
+                 document.Description = "Dotnet Core AtoZ";
 
-            //     document.AddSecurity("Bearer", Enumerable.Empty<string>(), new NSwag.OpenApiSecurityScheme
-            //     {
-            //         Type = OpenApiSecuritySchemeType.ApiKey,
-            //         Name = "Authorization",
-            //         Description = "copy 'Bearer ' + Valid jwt token into field",
-            //         In = OpenApiSecurityApiKeyLocation.Header
+                 document.AddSecurity("Bearer", Enumerable.Empty<string>(), new NSwag.OpenApiSecurityScheme
+                 {
+                     Type = OpenApiSecuritySchemeType.ApiKey,
+                    Name = "Authorization",
+                     Description = "copy 'Bearer ' + Valid jwt token into field",
+                     In = OpenApiSecurityApiKeyLocation.Header
 
-            //     });
-            // });
+                 });
+             });
 
 
         }
@@ -124,8 +126,8 @@ namespace Api
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            // app.UseOpenApi();
-            // app.UseSwaggerUi3();
+             app.UseOpenApi();
+             app.UseSwaggerUi3();
             //added custom middleware.
             app.UseMiddleware<ErrorHandlinMiddleware>();
             if (env.IsDevelopment())
