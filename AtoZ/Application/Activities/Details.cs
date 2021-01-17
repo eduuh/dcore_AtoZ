@@ -1,6 +1,8 @@
+using System.Net;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Errors;
 using AutoMapper;
 using Domain;
 using MediatR;
@@ -31,9 +33,7 @@ namespace Application.Activities
             {
                 var activity = await _context.Activities.FindAsync(request.Id);
 
-               // TODO Add restexcption handler.
-
-                if(activity == null) throw new Exception("Not found");
+                if(activity == null) throw new RestException(HttpStatusCode.NotFound, new { activity = "Not found"});
 
                 var activityToReturn = _mapper.Map<Activity, ActivityDto>(activity);
                 return activityToReturn;

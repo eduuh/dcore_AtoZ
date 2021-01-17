@@ -130,10 +130,6 @@ namespace Api
              app.UseSwaggerUi3();
             //added custom middleware.
             app.UseMiddleware<ErrorHandlinMiddleware>();
-            if (env.IsDevelopment())
-            {
-                // app.UseDeveloperExceptionPage();
-            }
 
             app.UseForwardedHeaders(new ForwardedHeadersOptions
             {
