@@ -48,9 +48,9 @@ namespace Application.User
 
                 var result = await _signinmanager.CheckPasswordSignInAsync(user, request.Password, false);
 
+
                 if (result.Succeeded)
                 {
-                    //TODO: generate token
                     return new User
                     {
                         DispalyName = user.DisplayName,
@@ -60,7 +60,7 @@ namespace Application.User
                     };
 
                 }
-                throw new RestException(HttpStatusCode.Unauthorized);
+                throw new RestException(HttpStatusCode.Unauthorized, new { User = "Not Authorized"});
 
 
             }

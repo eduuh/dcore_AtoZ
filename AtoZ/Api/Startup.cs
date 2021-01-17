@@ -16,13 +16,13 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Persistence;
 using Microsoft.AspNetCore.HttpOverrides;
 using System.Threading.Tasks;
 using NSwag;
 using System.Linq;
+using Serilog;
 
 namespace Api
 {
@@ -98,28 +98,23 @@ namespace Api
                 return Task.CompletedTask;
                 }
                 };
-
-
-
             });
 
              //nswag
              services.AddSwaggerDocument(document =>
              {
-                document.Title = "Dotnet core AtoZ";
+                 document.Title = "Dotnet core AtoZ";
                  document.DocumentName = "v1";
                  document.Description = "Dotnet Core AtoZ";
 
                  document.AddSecurity("Bearer", Enumerable.Empty<string>(), new NSwag.OpenApiSecurityScheme
                  {
                      Type = OpenApiSecuritySchemeType.ApiKey,
-                    Name = "Authorization",
+                     Name = "Authorization",
                      Description = "copy 'Bearer ' + Valid jwt token into field",
                      In = OpenApiSecurityApiKeyLocation.Header
-
                  });
              });
-
 
         }
 
@@ -137,9 +132,12 @@ namespace Api
             });
 
             //app.UseHttpsRedirection();
+            //  configuring cors
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyHeader().AllowAnyHeader());
 
             app.UseRouting();
             // use routing
+            app.UseSerilogRequestLogging();
 
             app.UseAuthentication();
             app.UseAuthorization();

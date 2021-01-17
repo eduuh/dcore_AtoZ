@@ -14,7 +14,6 @@ namespace Application.Activities
 
         public class Query : IRequest<List<ActivityDto>>
         {
-
         }
 
         public class Handler : IRequestHandler<Query, List<ActivityDto>>

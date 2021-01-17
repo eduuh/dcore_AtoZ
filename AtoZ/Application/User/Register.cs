@@ -49,10 +49,9 @@ namespace Application.User
             //Mediator unit is an empty unit/object
             public async Task<User> Handle(Command request, CancellationToken cancellationToken)
             {
-                if(await _context.Users.AnyAsync(x => x.Email ==request.Email)) throw new System.Exception("Badrequest");
+                if(await _context.Users.AnyAsync(x => x.Email ==request.Email)) throw new Exception("Badrequest");
                 // handler logic
-                if(await _context.Users.AnyAsync(x => x.UserName ==request.UserName)) throw new System.Exception("Username already exist");
-
+                if(await _context.Users.AnyAsync(x => x.UserName ==request.UserName)) throw new Exception("Username already exist");
 
                 var user = new AppUser
                 {
@@ -68,7 +67,6 @@ namespace Application.User
                     DispalyName = user.DisplayName,
                     Token = _jwtGenerator.createToken(user),
                     Username = user.UserName,
-                    Image = null
             };
                 throw new Exception("Prolem saving Changes");
             }
