@@ -431,3 +431,194 @@ To list out available keys use the command.
 ➜ dotnet user-secrets list -p Api
 Tokenkey = super secret key
 ```
+
+### Deployment
+
+Adding support to **MySql server**. Swappng sqlite with **mysql** database.
+
+#### FOLLower/Following
+
+###### Self referencing Relationship
+
+And in this section we're going to implement her follower and following system.
+
+Now it's just not possible nowadays to create a socially networking type of sites and not include this
+
+particular feature.
+
+It would literally be a crime to development so it's made it into this particular course.
+
+And what we're going to do in this particular module is we're just going to implement the following
+
+feature from end to end.
+
+Now what kind of new in this particular section is that we need a type of relationship that's considered
+
+a self referencing Many to Many relationship and it is considered a self referencing Many to Many relationship
+
+because our user can have many followers and our user can also follow many of our users.
+
+So we've got that kind of relationship.
+
+And what I just want to show you now is the relationships between all of our tables.
+
+I've excluded the ASPCA core identity tables that we're not really using as part of our application
+
+search him and certainly we're not interacting with them.
+
+So I've removed all of them to simplify this relationship diagram that shows the status of our application.
+
+Now in the top left we've got our following relationship and what we can to create is a join table and
+
+it's going to have an observer who is the follower and it's going to have a target.
+
+And that's gonna be the user that they're following.
+
+So we've got a many to many with a join table but he's being joined by the same table in this case not
+
+like our activities in our users which were two separate tables.
+
+This is a self referencing kind but the configuration is gonna be very similar to what we did before.
+
+So let's take a look at a before and after picture of what we're creating here at the moment we've just
+
+got static content for our followers and following and obviously what we're aiming for is to give this
+
+functionality.
+
+So after we've implemented this particular function then what we'll be able to do is actually click
+
+on the follow button and we'll have an extra follower and we'll also be able to see the followers in
+
+the following inside the content of the user's profile page as well.
+
+So this is where we're going with this particular section just the normal following follower feature
+
+and we'll get started implementing that next.
+
+Api Versioning
+
+A way to manage the impact of changes to your Apis on your clients. when developing apis you should keep one thing in mind: change is inevitable. whe you api reached a point where you need to add more responsibilities, you should consider versioning your Api. Hence you will need a versioning strategy.
+
+There are several approaches to versioning APIs and each of them has its pros and cons. This article will discuss the challenges of API versioning and how you can work with Microsoft's ASP.NET Core MVC versioning package to version Restful APIs built in ASP.Net core. 
+
+The first strategy where you would want to not break your client with breaking changes. Is to maintain different api version and continously deprecated old end points at certain stages.
+
+Install the Asp.Net Core MVC Versioning Package.
+
+Asp.Net core provides support for API Versioning out-of-the-box. To leverage APi versioning, all you need to do is install the **Microsoft.AspNetCore.Mvc.Versioning** package from Nuget. You can do this either via the **Nuget package manager** from the command Line.
+
+Install the package versioning to the staff.
+
+```cshap
+dotnet add package Microsoft.AspNetCore.Mvc.Versioning
+```
+
+Note that if you're using **asp.Net** web api,you should the versioning package
+
+Configuring Api Versioning in ASP.Net Core
+
+Now that the necessary package for versioning your API has been installed in your project, you can configure API versioning in the ConfigureService method of the Startup class. The following code snippet illustrates how this can be achieved.
+
+```csharp
+public void ConfigureServices(IServiceCollection services)
+{
+  services.AddControllers();
+  services.AddApiVersioning();
+}
+```
+
+When you make a get request to your APi,you will be presented with the error on **apiversioning** requiring an api version.
+
+To solve this error, you can specify the default version when adding the Api versioning services to the container. You might also want to use a default version if a version is not specified in the request. The following code snippet shows how you can set a default version as 1.0 using the **AssumeDefaultVersionWhenUnspecifiedProperty** If version information isn't available in the request.
+
+```csharp
+            services.AddApiVersioning(config =>
+            {
+                config.AssumeDefaultVersionWhenUnspecified = true;
+                config.DefaultApiVersion = ApiVersion.Default;
+                config.ReportApiVersions = true;
+            });
+
+```
+
+Report all supported versions of your Api
+
+You might want to let the clients of the API know all supported versions. To do this, you should take advantage of the **ReportAPiVersion** property as shown in the code snippet given above.
+
+
+Use versions in the controller and action methods
+
+Now let's add a few supported versions to our controller using attributes as show in the codes snippet below.
+
+```csharp
+[Route("api/[controller]")]
+[ApiController]
+[ApiVersion("1.0")]
+[ApiVersion("1.1")]
+[ApiVersion("2.0")]
+public class DefaultController : ControllerBase
+{
+    string[] authors = new string[]
+    { "Joydip Kanjilal", "Steve Smith", "Anand John" };
+    [HttpGet]
+    public IEnumerable<string> Get()
+    {
+        return authors;
+    }
+}
+```
+
+Reporting Deprecated Versions
+
+You can report the deprecated versions as well. To do this, you should pass an extra parameter to the ApiVersion method as show in the code snippet given below.
+
+```charp
+[ApiVersion("1.0", Deprecated = true)]
+```
+
+Map to a specific version of an action method.
+
+There's another important attribute named MapToApiVersion. You can use it to map to a specific version of an action method. The following code snippets shows how this can be accomplished.
+
+```charp
+[HttpGet("{id}")]
+[MapToApiVersion("2.0")]
+public string Get(int id)
+{
+   return authors[id];
+}
+```
+
+Api versioning strategies in ASP.Net Core
+
+There are several ways in which you can version your API in ASP.Net core.
+
+1. Pass version information as QueryString parameters.
+
+```bash
+http://localhost:25718/api/default?api-version=1.0
+```
+
+2. Pass Version Information in the HTTP headers.
+
+```csharp
+services.AddApiVersioning(config =>
+{
+   config.DefaultApiVersion = new ApiVersion(1, 0);
+   config.AssumeDefaultVersionWhenUnspecified = true;
+   config.ReportApiVersions = true;
+   config.ApiVersionReader = new HeaderApiVersionReader("api-version");
+});
+
+```
+
+
+
+
+
+
+
+
+
+
